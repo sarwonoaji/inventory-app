@@ -54,6 +54,14 @@
                         <span class="text-base text-white">Barang Keluar</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('barang-keluar.index') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V8m0 8l3-3m-3 3l-3-3" />
+                        </svg>
+                        <span class="text-base text-white">COBA COMMIT</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 
