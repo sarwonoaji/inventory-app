@@ -76,6 +76,29 @@
 
 </div>
 
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+
+    <!-- Stok Trend Chart -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Trend Stok (6 Bulan)</h3>
+        <canvas id="stokChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Top Barang Keluar Chart -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top 5 Barang Keluar</h3>
+        <canvas id="topBarangChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Reorder Alerts Chart -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Reorder Alerts</h3>
+        <canvas id="reorderChart" width="400" height="200"></canvas>
+    </div>
+
+</div>
+
 <!-- Quick Actions -->
 <div class="bg-white p-6 rounded-xl shadow border border-gray-200 mb-8">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
@@ -267,4 +290,105 @@
 
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Stok Trend Chart
+    const stokCtx = document.getElementById('stokChart').getContext('2d');
+    const stokData = @json($stokChartData);
+    new Chart(stokCtx, {
+        type: 'line',
+        data: {
+            labels: stokData.map(item => item.month),
+            datasets: [{
+                label: 'Total Stok',
+                data: stokData.map(item => item.stok),
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Top Barang Keluar Chart
+    const topCtx = document.getElementById('topBarangChart').getContext('2d');
+    const topData = @json($topBarangKeluar);
+    new Chart(topCtx, {
+        type: 'bar',
+        data: {
+            labels: topData.map(item => item.nama_barang.substring(0, 15) + (item.nama_barang.length > 15 ? '...' : '')),
+            datasets: [{
+                label: 'Qty Keluar',
+                data: topData.map(item => item.total_keluar),
+                backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                borderColor: 'rgb(249, 115, 22)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Reorder Alerts Chart
+    const reorderCtx = document.getElementById('reorderChart').getContext('2d');
+    const reorderData = @json($reorderAlerts);
+    new Chart(reorderCtx, {
+        type: 'doughnut',
+        data: {
+            labels: reorderData.map(item => item.nama_barang.substring(0, 15) + (item.nama_barang.length > 15 ? '...' : '')),
+            datasets: [{
+                data: reorderData.map(item => item.stok),
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(249, 115, 22, 0.8)',
+                    'rgba(234, 179, 8, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(59, 130, 246, 0.8)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        font: {
+                            size: 10
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 @endsection

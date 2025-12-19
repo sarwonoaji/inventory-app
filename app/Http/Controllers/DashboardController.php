@@ -46,6 +46,35 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
             
+        // Data untuk chart stok per bulan (6 bulan terakhir)
+        $stokChartData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $stok = Barang::whereYear('created_at', $month->year)
+                         ->whereMonth('created_at', $month->month)
+                         ->sum('stok');
+            
+            $stokChartData[] = [
+                'month' => $month->format('M Y'),
+                'stok' => $stok
+            ];
+        }
+        
+        // Top 5 barang keluar
+        $topBarangKeluar = DB::table('barang_keluar_details')
+            ->join('barangs', 'barang_keluar_details.barang_id', '=', 'barangs.id')
+            ->select('barangs.nama_barang', DB::raw('SUM(barang_keluar_details.qty) as total_keluar'))
+            ->groupBy('barang_keluar_details.barang_id', 'barangs.nama_barang')
+            ->orderBy('total_keluar', 'desc')
+            ->take(5)
+            ->get();
+        
+        // Reorder alerts (barang dengan stok <= min_stok atau 10)
+        $reorderAlerts = Barang::where('stok', '<=', DB::raw('COALESCE(min_stok, 10)'))
+            ->orderBy('stok', 'asc')
+            ->take(5)
+            ->get();
+        
         // Data untuk chart 7 hari terakhir
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -72,7 +101,10 @@ class DashboardController extends Controller
             'recentBarangMasuk',
             'recentBarangKeluar',
             'barangMenipis',
-            'chartData'
+            'chartData',
+            'stokChartData',
+            'topBarangKeluar',
+            'reorderAlerts'
         ));
     }
 }
