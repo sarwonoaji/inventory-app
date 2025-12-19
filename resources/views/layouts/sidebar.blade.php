@@ -1,4 +1,4 @@
-<aside x-show="sidebarOpen" x-transition class="bg-blue-600 border-r border-blue-700 w-64 transition-all duration-200" x-bind:class="{'w-20': !sidebarOpen}">
+<aside x-show="sidebarOpen" x-transition class="bg-blue-600 border-r border-blue-700 w-64 transition-all duration-200 sticky top-0 h-screen overflow-y-auto" x-bind:class="{'w-20': !sidebarOpen}">
     <div class="h-full flex flex-col text-white">
         <div class="p-4 flex items-center justify-between border-b border-blue-700">
                 <a href="{{ route('dashboard') }}" class="flex items-center space-x-3">

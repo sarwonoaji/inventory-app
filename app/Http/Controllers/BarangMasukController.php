@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\BarangMasuk;
 use App\Models\BarangMasukDetail;
+use App\Models\BarangKeluarDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ActivityLogger;
@@ -15,6 +16,13 @@ class BarangMasukController extends Controller
     public function index()
     {
         $barangMasuks = BarangMasuk::with('details.barang')->latest()->paginate(10);
+
+        // Check for each if has keluar
+        foreach ($barangMasuks as $bm) {
+            $barangIds = $bm->details->pluck('barang_id');
+            $bm->has_keluar = BarangKeluarDetail::whereIn('barang_id', $barangIds)->exists();
+        }
+
         return view('barang-masuk.index', compact('barangMasuks'));
     }
 
@@ -80,8 +88,17 @@ class BarangMasukController extends Controller
             'qty.*' => 'required|integer|min:1'
         ]);
 
+        $barangMasuk = BarangMasuk::with('details')->findOrFail($id);
+
+        // Check if any barang has been used in barang keluar
+        $barangIds = $barangMasuk->details->pluck('barang_id');
+        if (BarangKeluarDetail::whereIn('barang_id', $barangIds)->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tidak dapat mengedit barang masuk karena sudah ada pengeluaran untuk barang terkait');
+        }
+
         DB::transaction(function () use ($request, $id) {
-            $barangMasuk = BarangMasuk::with('details')->findOrFail($id);
 
             // Kembalikan stok lama
             foreach ($barangMasuk->details as $detail) {
@@ -119,8 +136,17 @@ class BarangMasukController extends Controller
 
     public function destroy($id)
     {
+        $barangMasuk = BarangMasuk::with('details')->findOrFail($id);
+
+        // Check if any barang has been used in barang keluar
+        $barangIds = $barangMasuk->details->pluck('barang_id');
+        if (BarangKeluarDetail::whereIn('barang_id', $barangIds)->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tidak dapat menghapus barang masuk karena sudah ada pengeluaran untuk barang terkait');
+        }
+
         DB::transaction(function () use ($id) {
-            $barangMasuk = BarangMasuk::with('details')->findOrFail($id);
 
             // Kembalikan stok
             foreach ($barangMasuk->details as $detail) {

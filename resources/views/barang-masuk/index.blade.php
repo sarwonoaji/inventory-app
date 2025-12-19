@@ -42,6 +42,7 @@
                     </td>
                     <td class="px-6 py-4 border-gray-200 text-center space-x-2">
                         <!-- Edit -->
+                        @if(!$bm->has_keluar)
                         <a href="{{ route('barang-masuk.edit', $bm->id) }}"
                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
@@ -50,8 +51,19 @@
                                       d="M15.232 5.232l3.536 3.536M9 11l6 6L21 9l-6-6-6 6z" />
                             </svg>
                         </a>
+                        @else
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-400 cursor-not-allowed"
+                              title="Tidak dapat edit karena sudah ada pengeluaran">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M15.232 5.232l3.536 3.536M9 11l6 6L21 9l-6-6-6 6z" />
+                            </svg>
+                        </span>
+                        @endif
 
                         <!-- Hapus -->
+                        @if(!$bm->has_keluar)
                         <form action="{{ route('barang-masuk.destroy', $bm->id) }}" method="POST" class="inline"
                               onsubmit="return confirm('Yakin hapus barang masuk ini?')">
                             @csrf
@@ -64,6 +76,16 @@
                                 </svg>
                             </button>
                         </form>
+                        @else
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-400 cursor-not-allowed"
+                              title="Tidak dapat hapus karena sudah ada pengeluaran">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22"/>
+                                </svg>
+                            </span>
+                        @endif
 
                         <!-- Context menu -->
                        <!-- Context Menu -->
