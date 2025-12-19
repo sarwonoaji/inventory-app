@@ -111,6 +111,10 @@
                         </a>
                     </th>
 
+                    <th class="px-6 py-4 text-center border-r border-gray-300">
+                        QR Code
+                    </th>
+
                     <th class="px-6 py-4 text-center border-gray-300">
                         Aksi
                     </th>

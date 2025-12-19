@@ -15,6 +15,10 @@
         </span>
     </td>
 
+    <td class="px-6 py-4 text-center border-r border-gray-200">
+        <img src="{{ route('barang.qr', $barang) }}" alt="QR Code" class="mx-auto w-12 h-12 cursor-pointer" onclick="window.open(this.src, '_blank')">
+    </td>
+
     <td class="px-6 py-4 text-center space-x-3">
         <!-- Edit -->
         <a href="{{ route('barang.edit', $barang->id) }}"

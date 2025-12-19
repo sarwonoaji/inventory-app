@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('barang', BarangController::class)->except(['show']);
     Route::get('barang/{barang}', [BarangController::class, 'show'])->name('barang.show');
 
+    // QR Scan
+    Route::get('/scan-qr', [BarangController::class, 'scanQr'])->name('barang.scan-qr');
+    Route::post('/scan-qr/process', [BarangController::class, 'processQr'])->name('barang.process-qr');
+    Route::get('/barang/{barang}/qr', [BarangController::class, 'generateQr'])->name('barang.qr');
+
     // Barang Masuk
     Route::resource('barang-masuk', BarangMasukController::class);
     Route::get('barang-masuk/{id}/pdf', [BarangMasukController::class, 'pdf'])->name('barang-masuk.pdf');

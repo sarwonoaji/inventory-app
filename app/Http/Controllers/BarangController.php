@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\ActivityLogger;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 
 class BarangController extends Controller
@@ -645,5 +647,39 @@ class BarangController extends Controller
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil dihapus');
+    }
+
+    public function scanQr()
+    {
+        return view('barang.scan-qr');
+    }
+
+    public function processQr(Request $request)
+    {
+        $request->validate(['qr_code' => 'required|string']);
+
+        $barang = Barang::where('kode_barang', $request->qr_code)->first();
+
+        if (!$barang) {
+            return response()->json(['error' => 'Barang tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'nama_barang' => $barang->nama_barang,
+            'kode_barang' => $barang->kode_barang,
+            'stok' => $barang->stok,
+            'satuan' => $barang->satuan,
+            'keterangan' => $barang->keterangan,
+            'min_stok' => $barang->min_stok,
+        ]);
+    }
+
+    public function generateQr(Barang $barang)
+    {
+        $qrCode = new QrCode($barang->kode_barang);
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode);
+
+        return response($result->getString(), 200, ['Content-Type' => 'image/png']);
     }
 }

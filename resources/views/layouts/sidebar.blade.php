@@ -31,6 +31,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('barang.scan-qr') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 21h.01M12 3h.01M21 12h.01M3 12h.01M21 21h.01M3 3h.01" />
+                        </svg>
+                        <span class="text-base text-white">Scan QR</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('barang.monitor') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
                         <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18" />
