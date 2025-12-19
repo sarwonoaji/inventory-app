@@ -111,6 +111,21 @@
         </table>
     </div>
 </div>
+
+{{-- Pagination --}}
+<div class="mt-6">
+    <style>
+        .pagination a, .pagination span {
+            color: #2563eb !important; /* blue-600 */
+        }
+        .pagination .active span {
+            background-color: #2563eb !important;
+            color: white !important;
+        }
+    </style>
+    {{ $barangMasuks->links() }}
+</div>
+
 <script>
     function showContextMenu(id) {
         // Tutup semua context menu lain terlebih dahulu

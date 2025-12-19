@@ -108,6 +108,21 @@
         </table>
     </div>
 </div>
+
+{{-- Pagination --}}
+<div class="mt-6">
+    <style>
+        .pagination a, .pagination span {
+            color: #ea580c !important; /* orange-600 */
+        }
+        .pagination .active span {
+            background-color: #ea580c !important;
+            color: white !important;
+        }
+    </style>
+    {{ $barangKeluars->links() }}
+</div>
+
 <script>
     function showContextMenu(id) {
         // Tutup semua context menu lain terlebih dahulu

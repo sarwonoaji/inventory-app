@@ -61,6 +61,30 @@
                    placeholder="pcs / box / rim">
         </div>
 
+        <!-- MIN STOK -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                Batas Minimum Stok
+            </label>
+            <input type="number"
+                   name="min_stok"
+                   value="{{ old('min_stok', 0) }}"
+                   class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                   placeholder="0">
+        </div>
+
+        <!-- SUPPLIER EMAIL -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                Email Supplier
+            </label>
+            <input type="email"
+                   name="supplier_email"
+                   value="{{ old('supplier_email') }}"
+                   class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                   placeholder="supplier@example.com">
+        </div>
+
         <!-- KETERANGAN -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">

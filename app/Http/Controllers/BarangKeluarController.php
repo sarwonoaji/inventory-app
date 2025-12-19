@@ -9,12 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ActivityLogger;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Jobs\SendReorderNotification;
+use Illuminate\Support\Facades\Log;
 
 class BarangKeluarController extends Controller
 {
     public function index()
     {
-        $barangKeluars = BarangKeluar::with('details.barang')->latest()->get();
+        $barangKeluars = BarangKeluar::with('details.barang')->latest()->paginate(10);
         return view('barang-keluar.index', compact('barangKeluars'));
     }
 
@@ -76,6 +78,14 @@ class BarangKeluarController extends Controller
                 // UPDATE STOK (kurangi stok)
                 Barang::where('id', $barangId)
                     ->decrement('stok', $request->qty[$i]);
+
+                // Check for reorder
+                $barang = Barang::find($barangId);
+                Log::info('Barang after decrement: ' . $barang->nama_barang . ' Stok: ' . $barang->stok . ' Min: ' . $barang->min_stok);
+                if ($barang && $barang->stok <= $barang->min_stok) {
+                    Log::info('Dispatching reorder job for: ' . $barang->nama_barang);
+                    SendReorderNotification::dispatch($barang);
+                }
             }
             ActivityLogger::log('create_barang_keluar', $barangKeluar, ['count' => count($request->barang_id)]);
         });
@@ -177,6 +187,16 @@ class BarangKeluarController extends Controller
                     ->decrement('stok', $qty);
             }
             ActivityLogger::log('update_barang_keluar', $barangKeluar, ['count' => count($request->barang_id)]);
+
+            // Check for reorder after update
+            foreach ($request->barang_id as $i => $barangId) {
+                $barang = Barang::find($barangId);
+                Log::info('Barang after update decrement: ' . $barang->nama_barang . ' Stok: ' . $barang->stok . ' Min: ' . $barang->min_stok);
+                if ($barang && $barang->stok <= $barang->min_stok) {
+                    Log::info('Dispatching reorder job for: ' . $barang->nama_barang);
+                    SendReorderNotification::dispatch($barang);
+                }
+            }
         });
 
         return redirect()

@@ -601,6 +601,8 @@ class BarangController extends Controller
             'satuan' => $request->satuan,
             'stok' => 0,
             'keterangan' => $request->keterangan,
+            'min_stok' => $request->min_stok ?? 0,
+            'supplier_email' => $request->supplier_email,
         ]);
 
         ActivityLogger::log('create_barang', null, ['kode_barang' => $request->kode_barang, 'nama_barang' => $request->nama_barang]);

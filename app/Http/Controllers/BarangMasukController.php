@@ -14,7 +14,7 @@ class BarangMasukController extends Controller
 {
     public function index()
     {
-        $barangMasuks = BarangMasuk::with('details.barang')->latest()->get();
+        $barangMasuks = BarangMasuk::with('details.barang')->latest()->paginate(10);
         return view('barang-masuk.index', compact('barangMasuks'));
     }
 

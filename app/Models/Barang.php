@@ -16,7 +16,9 @@ class Barang extends Model
         'nama_barang',
         'satuan',
         'stok',
-        'keterangan'
+        'keterangan',
+        'min_stok',
+        'supplier_email'
     ];
 
     public function barangMasukDetails()
