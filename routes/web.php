@@ -11,13 +11,31 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     if (Auth::check()) {
         $role = Auth::user()->role;
-        if ($role === 'admin') {
-            return redirect()->route('dashboard');
-        } elseif ($role === 'penerimaan') {
-            return redirect()->route('barang-masuk.index');
-        } elseif ($role === 'pengeluaran') {
-            return redirect()->route('barang-keluar.index');
+
+        // Role-specific redirects
+        $roleRedirects = [
+            'penerimaan' => 'barang-masuk.index',
+            'pengeluaran' => 'barang-keluar.index',
+        ];
+
+        // Check if role has specific redirect
+        if (array_key_exists($role, $roleRedirects)) {
+            $route = $roleRedirects[$role];
+            // Check if user has access to this menu
+            $menu = \App\Models\Menu::where('route', $route)->first();
+            if ($menu && $menu->hasRole($role)) {
+                return redirect()->route($route);
+            }
         }
+
+        // Default redirect to dashboard if user has access
+        $dashboardMenu = \App\Models\Menu::where('route', 'dashboard')->first();
+        if ($dashboardMenu && $dashboardMenu->hasRole($role)) {
+            return redirect()->route('dashboard');
+        }
+
+        // Fallback: redirect to first accessible menu or show error
+        return redirect()->route('login')->with('error', 'Anda tidak memiliki akses ke menu manapun.');
     }
 
     return redirect()->route('login');
@@ -66,6 +84,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Role management (admin only)
     Route::resource('roles', \App\Http\Controllers\RoleController::class);
+    Route::resource('barang-masuk', BarangMasukController::class);
+    Route::get('barang-masuk/{id}/pdf', [BarangMasukController::class, 'pdf'])->name('barang-masuk.pdf');
 });
 
 // Barang Masuk (penerimaan)

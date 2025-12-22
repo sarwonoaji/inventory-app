@@ -13,7 +13,7 @@ class UserController extends Controller
     public function create()
     {
         // Cek akses berdasarkan menu
-        $menu = \App\Models\Menu::where('route', 'users.create')->first();
+        $menu = \App\Models\Menu::where('route', 'users.index')->first();
         if (!$menu || !$menu->hasRole(Auth::user()->role)) {
             abort(403, 'Unauthorized');
         }
@@ -25,7 +25,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // Cek akses berdasarkan menu
-        $menu = \App\Models\Menu::where('route', 'users.create')->first();
+        $menu = \App\Models\Menu::where('route', 'users.index')->first();
         if (!$menu || !$menu->hasRole(Auth::user()->role)) {
             abort(403, 'Unauthorized');
         }

@@ -32,6 +32,7 @@ class MenuSeeder extends Seeder
                 $menuModel->assignRole('admin');
                 if ($menu['name'] === 'Dashboard') {
                     $menuModel->assignRole('manager');
+                    $menuModel->assignRole('supervisor');
                 }
             }
             if ($menu['name'] === 'Barang Masuk') {
