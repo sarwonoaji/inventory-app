@@ -10,7 +10,14 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect()->route('dashboard');
+        $role = Auth::user()->role;
+        if ($role === 'admin') {
+            return redirect()->route('dashboard');
+        } elseif ($role === 'penerimaan') {
+            return redirect()->route('barang-masuk.index');
+        } elseif ($role === 'pengeluaran') {
+            return redirect()->route('barang-keluar.index');
+        }
     }
 
     return redirect()->route('login');
@@ -24,8 +31,10 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-    // Barang routes
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Barang routes (admin only)
     Route::get('/barang/monitor', [BarangController::class, 'monitor'])->name('barang.monitor');
     Route::get('/barang/search', [BarangController::class, 'search'])->name('barang.search');
     Route::get('/barang/monitor/csv', [BarangController::class, 'exportCsv'])->name('barang.monitor.csv');
@@ -41,21 +50,34 @@ Route::middleware('auth')->group(function () {
     Route::resource('barang', BarangController::class)->except(['show']);
     Route::get('barang/{barang}', [BarangController::class, 'show'])->name('barang.show');
 
-    // QR Scan
+    // QR Scan (admin only)
     Route::get('/scan-qr', [BarangController::class, 'scanQr'])->name('barang.scan-qr');
     Route::post('/scan-qr/process', [BarangController::class, 'processQr'])->name('barang.process-qr');
     Route::get('/barang/{barang}/qr', [BarangController::class, 'generateQr'])->name('barang.qr');
 
-    // Barang Masuk
+    // Activity logs (admin only)
+    Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+
+    // User management
+    Route::resource('users', \App\Http\Controllers\UserController::class);
+
+    // Menu management (admin only)
+    Route::resource('menus', \App\Http\Controllers\MenuController::class);
+
+    // Role management (admin only)
+    Route::resource('roles', \App\Http\Controllers\RoleController::class);
+});
+
+// Barang Masuk (penerimaan)
+Route::middleware(['auth', 'role:penerimaan'])->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class);
     Route::get('barang-masuk/{id}/pdf', [BarangMasukController::class, 'pdf'])->name('barang-masuk.pdf');
+});
 
-    // Barang Keluar
+// Barang Keluar (pengeluaran)
+Route::middleware(['auth', 'role:pengeluaran'])->group(function () {
     Route::resource('barang-keluar', BarangKeluarController::class);
     Route::get('barang-keluar/{id}/pdf', [BarangKeluarController::class, 'pdf'])->name('barang-keluar.pdf');
-
-    // Activity logs
-    Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
 
 require __DIR__.'/auth.php';

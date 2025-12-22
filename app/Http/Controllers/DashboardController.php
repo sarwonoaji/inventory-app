@@ -6,12 +6,19 @@ use App\Models\Barang;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Cek akses berdasarkan menu
+        $menu = \App\Models\Menu::where('route', 'dashboard')->first();
+        if (!$menu || !$menu->hasRole(Auth::user()->role)) {
+            abort(403, 'Unauthorized');
+        }
+
         // Statistik utama
         $totalBarang = Barang::count();
         $totalStok = Barang::sum('stok');

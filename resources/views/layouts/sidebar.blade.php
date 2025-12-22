@@ -14,62 +14,24 @@
 
         <nav class="flex-1 overflow-auto p-4">
             <ul class="space-y-2">
+                @php
+                    $userRole = Auth::user()->role;
+                    $menus = \App\Models\Menu::join('menu_role', 'menus.id', '=', 'menu_role.menu_id')
+                        ->where('menu_role.role', $userRole)
+                        ->orderBy('menus.order')
+                        ->select('menus.*')
+                        ->get();
+                @endphp
+                @foreach($menus as $menu)
                 <li>
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
+                    <a href="{{ $menu->route ? route($menu->route) : '#' }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
                         <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $menu->icon }}" />
                         </svg>
-                        <span class="text-base text-white">Dashboard</span>
+                        <span class="text-base text-white">{{ $menu->name }}</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('barang.index') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
-                        </svg>
-                        <span class="text-base text-white">Barang</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('barang.scan-qr') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 21h.01M12 3h.01M21 12h.01M3 12h.01M21 21h.01M3 3h.01" />
-                        </svg>
-                        <span class="text-base text-white">Scan QR</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('barang.monitor') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18" />
-                        </svg>
-                        <span class="text-base text-white">Monitoring</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('barang-masuk.index') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v8m0 0l3-3m-3 3l-3-3" />
-                        </svg>
-                        <span class="text-base text-white">Barang Masuk</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('barang-keluar.index') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V8m0 8l3-3m-3 3l-3-3" />
-                        </svg>
-                        <span class="text-base text-white">Barang Keluar</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('barang-keluar.index') }}" class="flex items-center gap-3 p-3 rounded hover:bg-blue-700">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V8m0 8l3-3m-3 3l-3-3" />
-                        </svg>
-                        <span class="text-base text-white">COBA COMMIT</span>
-                    </a>
-                </li>
+                @endforeach
             </ul>
         </nav>
 
