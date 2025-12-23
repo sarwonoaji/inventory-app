@@ -55,7 +55,7 @@ class UserController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $users = User::all();
+        $users = User::paginate(10);
         return view('users.index', compact('users'));
     }
 

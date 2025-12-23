@@ -94,7 +94,11 @@
     <!-- Reorder Alerts Chart -->
     <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Reorder Alerts</h3>
-        <canvas id="reorderChart" width="400" height="200"></canvas>
+        @if($reorderAlerts->count() > 0)
+            <canvas id="reorderChart" width="400" height="200"></canvas>
+        @else
+            <p class="text-gray-500">Tidak ada barang yang perlu reorder saat ini.</p>
+        @endif
     </div>
 
 </div>
@@ -356,6 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Reorder Alerts Chart
+    @if($reorderAlerts->count() > 0)
     const reorderCtx = document.getElementById('reorderChart').getContext('2d');
     const reorderData = @json($reorderAlerts);
     new Chart(reorderCtx, {
@@ -389,6 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    @endif
 });
 </script>
 @endsection

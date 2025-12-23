@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'menu'])->group(function () {
     // Barang routes (admin only)
     Route::get('/barang/monitor', [BarangController::class, 'monitor'])->name('barang.monitor');
     Route::get('/barang/search', [BarangController::class, 'search'])->name('barang.search');
@@ -69,9 +69,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('barang/{barang}', [BarangController::class, 'show'])->name('barang.show');
 
     // QR Scan (admin only)
-    Route::get('/scan-qr', [BarangController::class, 'scanQr'])->name('barang.scan-qr');
-    Route::post('/scan-qr/process', [BarangController::class, 'processQr'])->name('barang.process-qr');
-    Route::get('/barang/{barang}/qr', [BarangController::class, 'generateQr'])->name('barang.qr');
+    Route::middleware('menu')->group(function () {
+        Route::get('/scan-qr', [BarangController::class, 'scanQr'])->name('barang.scan-qr');
+        Route::post('/scan-qr/process', [BarangController::class, 'processQr'])->name('barang.process-qr');
+        Route::get('/barang/{barang}/qr', [BarangController::class, 'generateQr'])->name('barang.qr');
+    });
 
     // Activity logs (admin only)
     Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
@@ -84,18 +86,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Role management (admin only)
     Route::resource('roles', \App\Http\Controllers\RoleController::class);
-    Route::resource('barang-masuk', BarangMasukController::class);
-    Route::get('barang-masuk/{id}/pdf', [BarangMasukController::class, 'pdf'])->name('barang-masuk.pdf');
 });
 
 // Barang Masuk (penerimaan)
-Route::middleware(['auth', 'role:penerimaan'])->group(function () {
+Route::middleware(['auth', 'menu'])->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class);
     Route::get('barang-masuk/{id}/pdf', [BarangMasukController::class, 'pdf'])->name('barang-masuk.pdf');
 });
 
 // Barang Keluar (pengeluaran)
-Route::middleware(['auth', 'role:pengeluaran'])->group(function () {
+Route::middleware(['auth', 'menu'])->group(function () {
     Route::resource('barang-keluar', BarangKeluarController::class);
     Route::get('barang-keluar/{id}/pdf', [BarangKeluarController::class, 'pdf'])->name('barang-keluar.pdf');
 });

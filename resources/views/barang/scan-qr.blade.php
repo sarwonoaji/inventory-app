@@ -53,7 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
-                scanner.start(cameras[0]);
+                // Prefer back camera
+                const backCamera = cameras.find(c => c.name.toLowerCase().includes('back') || c.name.toLowerCase().includes('rear') || c.name.toLowerCase().includes('environment'));
+                scanner.start(backCamera || cameras[0]);
             } else {
                 alert('No cameras found.');
             }
